@@ -231,11 +231,13 @@ class BundleDownload:
 
         now = time()
 
-        if Constant.BUNDLE_DOWNLOAD_LINK_PREFIX:
-            prefix = Constant.BUNDLE_DOWNLOAD_LINK_PREFIX
+        use_prefix = bool(Config.BUNDLE_DOWNLOAD_LINK_PREFIX)
+        if use_prefix:
+            prefix = Config.BUNDLE_DOWNLOAD_LINK_PREFIX
             if prefix[-1] != '/':
                 prefix += '/'
 
+            # 配置了远端下载前缀：直接拼接真实文件路径，不生成 token，不走本地服务器下载
             def url_func(x): return f'{prefix}{x}'
         else:
             def url_func(x): return url_for(
@@ -246,25 +248,32 @@ class BundleDownload:
         for x in bundles:
             if x.version_tuple <= ContentBundle.parse_version(self.client_bundle_version):
                 continue
-            t1 = os.urandom(64).hex()
 
-            x.json_url = url_func(t1)
+            if use_prefix:
+                x.json_url = url_func(x.json_path)
+                for part in x.bundle_parts:
+                    part.url = url_func(part.path)
+            else:
+                t1 = os.urandom(64).hex()
 
-            sql_list.append((t1, x.json_path, now, self.device_id))
-            for part in x.bundle_parts:
-                t = os.urandom(64).hex()
-                part.url = url_func(t)
-                sql_list.append((t, part.path, now, self.device_id))
+                x.json_url = url_func(t1)
+
+                sql_list.append((t1, x.json_path, now, self.device_id))
+                for part in x.bundle_parts:
+                    t = os.urandom(64).hex()
+                    part.url = url_func(t)
+                    sql_list.append((t, part.path, now, self.device_id))
 
             r.append(x.to_dict())
 
-        if not sql_list:
+        if not r:
             return []
 
-        self.clear_expired_token()
+        if sql_list:
+            self.clear_expired_token()
 
-        self.c_m.executemany(
-            '''insert into bundle_download_token values (?, ?, ?, ?)''', sql_list)
+            self.c_m.executemany(
+                '''insert into bundle_download_token values (?, ?, ?, ?)''', sql_list)
 
         return r
 

@@ -46,7 +46,7 @@ class Config:
     API_TOKEN = ''
 
     DOWNLOAD_LINK_PREFIX = ''  # http(s)://host(:port)/download/
-    BUNDLE_DOWNLOAD_LINK_PREFIX = ''  # http(s)://host(:port)/bundle_download/
+    BUNDLE_DOWNLOAD_LINK_PREFIX = ''  # http(s)://host(:port)/bundle_download/ 填写后直接拼接该前缀+文件路径下载，不生成 token、不走本地服务器下载；留空则走本地 token 下载
 
     DOWNLOAD_USE_NGINX_X_ACCEL_REDIRECT = False
     NGINX_X_ACCEL_REDIRECT_PREFIX = '/nginx_download/'
