@@ -4,8 +4,11 @@
 
 功能：
 - 登录（与游戏内同一套账号体系）
-- 注册：通过 **Resend.com** 发送邮箱验证码，验证后创建账号
+- 注册：**邀请码** + **Resend.com 邮箱验证码**，验证通过后创建账号
 - 登录后展示：**UID**、**好友码**、**PTT**
+- **管理后台**：`user_role` 表中有该 `user_id` 记录的用户即为管理员（默认初始 admin 的 `user_id=2000000` 已在表中）
+  - 批量生成邀请码 / 删除邀请码 / 查看邀请码使用者用户名
+  - 删除账号（清理该 `user_id` 在主库与日志库所有表中的数据）
 
 ## 环境要求
 
@@ -42,6 +45,20 @@
 
 4. 浏览器访问 `http://127.0.0.1:8000/`。
 
+## 邀请码与管理员
+
+- 注册必须填写邀请码；邀请码由管理员在管理后台批量生成，12 位大写字母数字，用过即失效。
+- 邀请码表 `invite_code` 在首次使用时自动创建（SQLite `CREATE TABLE IF NOT EXISTS`），
+  Python 服务器不知道这张额外表、也不影响其运行。
+- **管理员判定**：`user_role` 表中存在该 `user_id` 记录。默认初始 admin（`user_id=2000000`）
+  已在表中，登录 admin 账号后顶栏会出现「管理后台」入口。
+  要给某个玩家管理员权限，直接向 `user_role` 表插入 `(该用户user_id, "admin")` 即可。
+- 删除账号会清理该 `user_id` 在主库（user / login / best_score / user_char / user_char_full /
+  recent30 / user_world / songplay_token / user_item / user_save / user_present /
+  user_redeem / user_course / user_mission / user_kvdata / user_role / api_login / friend）
+  以及日志库（user_score / user_rating）中的全部数据；
+  该账号注册时用掉的邀请码会被释放为「未使用」。
+
 ## 与 Python 服务器的一致性说明
 
 - 密码采用 SHA-256（hex），与服务器 `hashlib.sha256(password).hexdigest()` 完全一致；
@@ -60,15 +77,19 @@
 ```
 public/
 ├── index.php          # 登录页
-├── register.php       # 注册页（Resend 邮箱验证码）
-├── profile.php        # 登录后主页：UID / 好友码 / PTT
+├── register.php       # 注册页（邀请码 + Resend 邮箱验证码）
+├── profile.php        # 登录后主页：UID / 好友码 / PTT + 顶栏
 ├── logout.php         # 退出登录
+├── admin/
+│   └── index.php      # 管理后台（邀请码管理 + 删除账号）
 ├── api/
 │   └── send_code.php  # AJAX：发送邮箱验证码
 ├── lib/
 │   ├── config.php     # 配置文件（数据库路径、Resend 密钥）
 │   ├── db.php         # SQLite（PDO）连接
 │   ├── auth.php       # 会话、登录、注册逻辑
+│   ├── invite.php     # 邀请码 / 管理员判定 / 删除账号
+│   ├── layout.php     # 顶栏（控制台导航 + 管理员入口）
 │   └── resend.php     # Resend.com 邮件客户端
 └── assets/
     ├── style.css
@@ -79,5 +100,5 @@ public/
 
 - 验证码只以 SHA-256 散列形式保存在 PHP 会话中，有有效期与错误次数限制；
 - 同一邮箱有重发冷却，同一 IP 每天有发送次数上限；
-- 表单带有 CSRF 校验；
+- 表单带有 CSRF 校验，管理后台所有操作都需登录且 `user_role` 有记录；
 - 请勿将填写了真实 Resend 密钥的 `config.php` 提交到公开仓库。

@@ -76,6 +76,17 @@ function redirect(string $url): never
     exit;
 }
 
+/**
+ * 计算到站点根目录的相对路径前缀。
+ * 页面在 public/ 根目录时为 ''；在 public/admin/ 子目录时为 '..'。
+ * 供跨页面链接使用，兼容站点挂载在子目录的情况。
+ */
+function app_base(): string
+{
+    $dir = basename((string)dirname($_SERVER['SCRIPT_NAME'] ?? '/'));
+    return $dir === 'admin' ? '..' : '';
+}
+
 /** 未登录则跳转到登录页 */
 function require_login(): void
 {
@@ -226,11 +237,13 @@ function validate_register_input(string $name, string $password, string $email):
  * 2. 生成 user_id（max + 1）
  * 3. 生成 9 位随机好友码
  * 4. 写入 user 记录、初始角色 user_char、全解锁 user_char_full
- * 5. 成功后直接完成登录
+ * 5. 若提供 $claimInvite 回调（例如邀请码占用），在同一个事务内执行
+ * 6. 成功后直接完成登录
  *
+ * @param callable(PDO $db, int $userId): array|null $claimInvite 返回 [bool, ?string]
  * @return array{0: bool, 1: ?string} [是否成功, 错误信息]
  */
-function user_register(string $name, string $password, string $email): array
+function user_register(string $name, string $password, string $email, ?callable $claimInvite = null): array
 {
     $invalid = validate_register_input($name, $password, $email);
     if ($invalid !== null) {
@@ -332,6 +345,15 @@ function user_register(string $name, string $password, string $email): array
                 ':exp'     => $maxLevel === 30 ? 25000 : 10000,
                 ':uncap'   => (int)$ch['is_uncapped'],
             ]);
+        }
+
+        // 若注册带了邀请码，在事务内占用（失败则整体回滚）
+        if ($claimInvite !== null) {
+            [$ok, $err] = $claimInvite($db, $userId);
+            if (!$ok) {
+                $db->rollBack();
+                return [false, $err];
+            }
         }
 
         $db->commit();

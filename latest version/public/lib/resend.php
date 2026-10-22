@@ -23,6 +23,37 @@ function resend_config(): array
 }
 
 /**
+ * 规范化 / 校验 Resend 发件地址（from）。
+ * Resend 只接受两种格式：
+ *   1. email@example.com
+ *   2. Name <email@example.com>
+ * 返回规范化后的字符串；格式不合法返回 null。
+ */
+function normalize_from(string $from): ?string
+{
+    // 去掉编辑配置文件时可能误带入的换行 / Tab，并把连续空白合并为单个空格
+    $from = trim($from);
+    $from = (string)preg_replace('/[\r\n\t]+/', ' ', $from);
+    $from = (string)preg_replace('/\s+/', ' ', $from);
+
+    if ($from === '') {
+        return null;
+    }
+
+    // 纯邮箱：email@example.com
+    if (preg_match('/^[^\s<>@]+@[^\s<>@]+\.[^\s<>@]+$/', $from)) {
+        return $from;
+    }
+
+    // 名称 <邮箱>：Name <email@example.com>（容忍“名称<邮箱>”缺空格的情况）
+    if (preg_match('/^(.+?)\s*<([^\s<>@]+@[^\s<>@]+\.[^\s<>@]+)>$/u', $from, $m)) {
+        return trim($m[1]) . ' <' . $m[2] . '>';
+    }
+
+    return null;
+}
+
+/**
  * 发送一封 HTML 邮件。
  *
  * @return array{0: bool, 1: ?string} [是否成功, 错误信息]
@@ -35,9 +66,14 @@ function resend_send(string $to, string $subject, string $html): array
         return [false, 'Resend 未配置：请填写 public/lib/config.php 中的 api_key 并将 enabled 设为 true'];
     }
 
-    $from = $conf['from'] ?? '';
-    if ($from === '') {
-        return [false, 'Resend 未配置发件地址（from）'];
+    $from = normalize_from((string)($conf['from'] ?? ''));
+    if ($from === null) {
+        return [
+            false,
+            '发件地址（from）格式不正确，当前值：' . var_export($conf['from'] ?? '', true)
+            . '。请按 `Name <email@example.com>` 或 `email@example.com` 格式填写'
+            . ' public/lib/config.php 中的 from，且发件域名需在 Resend 后台完成验证',
+        ];
     }
 
     $payload = [
@@ -89,7 +125,7 @@ function resend_verification_html(int $code, int $ttlSeconds): string
     $minutes = max(1, $minutes);
 
     return '<div style="font-family:\'Helvetica Neue\',Arial,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;background:#f7f7fb;border-radius:12px;color:#2b2b3a;">'
-        . '<h2 style="margin:0 0 8px;font-size:20px;">Arcaea 账号注册</h2>'
+        . '<h2 style="margin:0 0 8px;font-size:20px;">Arcaxa 账号注册</h2>'
         . '<p style="margin:0 0 20px;color:#5b5b70;font-size:14px;">感谢注册本服务器，您的邮箱验证码为：</p>'
         . '<p style="margin:0 0 20px;font-size:40px;font-weight:700;letter-spacing:8px;color:#6c4bd8;'
         . 'background:#fff;border-radius:10px;text-align:center;padding:16px 0;border:1px dashed #c9bef5;">'

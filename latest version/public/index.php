@@ -42,14 +42,14 @@ $flash = flash_get();
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>登录 · Arcaea 用户中心</title>
+<title>登录 · Arcaxa 用户中心</title>
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body class="auth-page">
 <div class="auth-card">
     <div class="logo">
         <div class="logo-mark">A</div>
-        <h1>Arcaea 用户中心</h1>
+        <h1>Arcaxa 用户中心</h1>
         <p>登录以查看你的 UID、好友码与 PTT</p>
     </div>
 

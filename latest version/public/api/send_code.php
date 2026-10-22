@@ -78,7 +78,7 @@ $code = random_int(100000, 999999);
 
 // 先尝试发送，成功后再写入会话（避免发送失败导致验证码缓存）
 $html = resend_verification_html($code, $ttl);
-[$ok, $err] = resend_send($email, 'Arcaea 注册验证码', $html);
+[$ok, $err] = resend_send($email, 'Arcaxa 注册验证码', $html);
 
 if (!$ok) {
     json_out(false, $err);

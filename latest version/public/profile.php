@@ -6,6 +6,7 @@ declare(strict_types=1);
  */
 
 require_once __DIR__ . '/lib/auth.php';
+require_once __DIR__ . '/lib/layout.php';
 
 require_login();
 
@@ -22,7 +23,7 @@ $ptt = is_numeric($user['rating_ptt'])
 $name = (string)$user['name'];
 $email = (string)($user['email'] ?? '');
 $joinDate = !empty($user['join_date'])
-    ? date('Y-m-d H:i:s', (int)$user['join_date'] / 1000)
+    ? date('Y-m-d H:i:s', (int)((int)$user['join_date'] / 1000))
     : '—';
 
 $flash = flash_get();
@@ -32,16 +33,11 @@ $flash = flash_get();
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>我的账号 · Arcaea 用户中心</title>
+<title>我的账号 · Arcaxa 用户中心</title>
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body class="profile-page">
-<div class="topbar">
-    <div class="topbar-inner">
-        <span class="brand">Arcaea 用户中心</span>
-        <a href="logout.php" class="btn btn-ghost btn-sm">退出登录</a>
-    </div>
-</div>
+<?php render_topbar('profile'); ?>
 
 <div class="profile-wrap">
     <?php foreach ($flash as $f): ?>
@@ -49,7 +45,7 @@ $flash = flash_get();
     <?php endforeach; ?>
 
     <div class="profile-head">
-        <div class="avatar"><?= e(mb_substr($name, 0, 1)) ?></div>
+        <div class="avatar"><?= e(first_char($name)) ?></div>
         <div>
             <h1><?= e($name) ?></h1>
             <p class="sub"><?= e($email !== '' ? $email : '未绑定邮箱') ?> · 注册于 <?= e($joinDate) ?></p>

@@ -25,9 +25,9 @@ return [
      * 在 Resend 后台添加发件域名并完成验证后，把发件地址填入 from。
      */
     'resend' => [
-        'enabled'   => false,                   // 配置完成后改为 true
+        'enabled'   => true,                   // 配置完成后改为 true
         'api_key'   => '',                      // Resend API Key（re_ 开头）
-        'from'      => 'Arcaxa', // 发件地址（需在 Resend 后台验证）
+        'from'      => 'admin@xiaoxinww.xin', // 发件地址（需在 Resend 后台验证）
         'api_url'   => 'https://api.resend.com/emails',
     ],
 

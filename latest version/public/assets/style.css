@@ -350,6 +350,239 @@ a:hover {
     background: rgba(124, 92, 255, 0.2);
 }
 
+/* ============ 顶部导航 ============ */
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 16px;
+}
+
+.nav-links a {
+    color: var(--muted);
+    font-size: 14px;
+    padding: 4px 2px;
+    border-bottom: 2px solid transparent;
+}
+
+.nav-links a:hover {
+    color: var(--text);
+    text-decoration: none;
+}
+
+.nav-links a.active {
+    color: var(--accent-2);
+    border-bottom-color: var(--accent);
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.admin-badge {
+    font-size: 12px;
+    color: #ffd479;
+    background: rgba(255, 212, 121, 0.14);
+    border: 1px solid rgba(255, 212, 121, 0.4);
+    border-radius: 999px;
+    padding: 3px 12px;
+}
+
+/* ============ 管理后台 ============ */
+.admin-wrap {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 28px 20px 80px;
+}
+
+.page-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.admin-stats .stat-value {
+    font-size: 28px;
+}
+
+.panel {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 22px;
+    margin-bottom: 22px;
+}
+
+.panel h2 {
+    font-size: 17px;
+    margin-bottom: 14px;
+}
+
+.panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.panel-head h2 {
+    margin-bottom: 0;
+}
+
+.panel-tip {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    line-height: 1.7;
+}
+
+.danger-panel {
+    border-color: rgba(255, 107, 129, 0.4);
+}
+
+.form-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: flex-end;
+}
+
+.form-grid .field {
+    margin-bottom: 0;
+    flex: 1;
+    min-width: 160px;
+}
+
+.form-grid .field-wide {
+    flex: 2;
+    min-width: 280px;
+}
+
+.form-grid textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.07);
+    color: var(--text);
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    resize: vertical;
+}
+
+.form-grid textarea:focus {
+    border-color: var(--accent);
+}
+
+.inline-form {
+    display: inline;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #e5484d, #ff6b81);
+    color: #fff;
+    font-weight: 600;
+}
+
+.btn-danger:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(255, 107, 129, 0.35);
+}
+
+/* ============ 表格 / 标签 ============ */
+.table-wrap {
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.table th,
+.table td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    vertical-align: middle;
+}
+
+.table th {
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+.table tr:hover td {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.table .empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 28px 0;
+}
+
+.mono {
+    font-family: "SF Mono", Consolas, Menlo, monospace;
+    letter-spacing: 1px;
+}
+
+.badge {
+    display: inline-block;
+    font-size: 12px;
+    border-radius: 999px;
+    padding: 3px 10px;
+}
+
+.badge-unused {
+    color: var(--success);
+    background: rgba(76, 217, 168, 0.12);
+    border: 1px solid rgba(76, 217, 168, 0.35);
+}
+
+.badge-used {
+    color: var(--muted);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--card-border);
+}
+
+.tabs {
+    display: flex;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 4px;
+}
+
+.tabs a {
+    color: var(--muted);
+    font-size: 13px;
+    padding: 6px 14px;
+    border-radius: 8px;
+}
+
+.tabs a:hover {
+    color: var(--text);
+    text-decoration: none;
+}
+
+.tabs a.active {
+    color: var(--text);
+    background: rgba(124, 92, 255, 0.3);
+}
+
 /* ============ 响应式 ============ */
 @media (max-width: 640px) {
     .stat-grid {

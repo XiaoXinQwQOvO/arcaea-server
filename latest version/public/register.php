@@ -6,6 +6,7 @@ declare(strict_types=1);
  */
 
 require_once __DIR__ . '/lib/auth.php';
+require_once __DIR__ . '/lib/invite.php';
 
 // 已登录则直接进入主页
 if (current_user() !== null) {
@@ -15,6 +16,7 @@ if (current_user() !== null) {
 $error = null;
 $email = '';
 $name = '';
+$inviteCode = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!csrf_check()) {
@@ -23,10 +25,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $email = trim((string)($_POST['email'] ?? ''));
         $code = trim((string)($_POST['code'] ?? ''));
         $name = trim((string)($_POST['name'] ?? ''));
+        $inviteCode = trim((string)($_POST['invite_code'] ?? ''));
         $password = (string)($_POST['password'] ?? '');
         $password2 = (string)($_POST['password2'] ?? '');
 
-        if ($password !== $password2) {
+        if ($inviteCode === '') {
+            $error = '请输入邀请码';
+        } elseif ($password !== $password2) {
             $error = '两次输入的密码不一致';
         } else {
             app_session_start();
@@ -48,7 +53,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['verify_code']['attempts'] = (int)$vc['attempts'] + 1;
                 $error = '验证码错误';
             } else {
-                [$ok, $msg] = user_register($name, $password, $email);
+                // 邀请码在用户创建事务内校验并占用，保证原子性
+                $claim = function (PDO $db, int $userId) use ($inviteCode): array {
+                    return invite_claim($db, $inviteCode, $userId);
+                };
+                [$ok, $msg] = user_register($name, $password, $email, $claim);
                 if ($ok) {
                     unset($_SESSION['verify_code']);
                     flash_set('success', '注册成功，欢迎 ' . $name . '！');
@@ -103,6 +112,13 @@ $flash = flash_get();
             <label for="code">邮箱验证码</label>
             <input type="text" id="code" name="code" required inputmode="numeric"
                    pattern="[0-9]{6}" placeholder="6 位数字验证码" maxlength="6">
+        </div>
+
+        <div class="field">
+            <label for="invite_code">邀请码</label>
+            <input type="text" id="invite_code" name="invite_code" value="<?= e($inviteCode) ?>" required
+                   autocomplete="off" placeholder="请输入邀请码" maxlength="32">
+            <p class="hint">需要有效邀请码才能注册</p>
         </div>
 
         <div class="field">
