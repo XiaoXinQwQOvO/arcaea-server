@@ -16,7 +16,7 @@ bp = Blueprint('users', __name__, url_prefix='/users')
 
 
 @bp.route('', methods=['POST'])
-@role_required(request, ['change'])
+@role_required(request, ['change_nya'])
 @request_json_handle(request, ['name', 'password', 'email'])
 @api_try
 def users_post(data, user):

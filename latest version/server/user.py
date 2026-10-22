@@ -14,7 +14,7 @@ from .func import arc_try, header_check, success_return
 
 bp = Blueprint('user', __name__, url_prefix='/user')
 
-bp2 = Blueprint('account', __name__, url_prefix='/account')
+bp2 = Blueprint('account', __name__, url_prefix='/account_nya')
 
 
 @bp.route('', methods=['POST'])  # 注册接口
