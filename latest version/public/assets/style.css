@@ -1,0 +1,370 @@
+/* ============ 基础 ============ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-1: #151327;
+    --bg-2: #1e1a3a;
+    --card: rgba(255, 255, 255, 0.06);
+    --card-border: rgba(255, 255, 255, 0.10);
+    --text: #f0eefc;
+    --muted: #a9a3c9;
+    --accent: #7c5cff;
+    --accent-2: #b48cff;
+    --danger: #ff6b81;
+    --success: #4cd9a8;
+    --radius: 14px;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background:
+        radial-gradient(1200px 600px at 85% -10%, rgba(124, 92, 255, 0.28), transparent 60%),
+        radial-gradient(900px 500px at -10% 110%, rgba(180, 140, 255, 0.16), transparent 60%),
+        linear-gradient(160deg, var(--bg-1), var(--bg-2));
+    background-attachment: fixed;
+    color: var(--text);
+    min-height: 100vh;
+}
+
+a {
+    color: var(--accent-2);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ============ 提示消息 ============ */
+.alert {
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    border: 1px solid;
+}
+
+.alert-error {
+    background: rgba(255, 107, 129, 0.12);
+    border-color: rgba(255, 107, 129, 0.4);
+    color: #ffb3bf;
+}
+
+.alert-success {
+    background: rgba(76, 217, 168, 0.12);
+    border-color: rgba(76, 217, 168, 0.4);
+    color: #9ff0d4;
+}
+
+/* ============ 登录 / 注册页 ============ */
+.auth-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 36px 32px 28px;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 26px;
+}
+
+.logo-mark {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 14px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(124, 92, 255, 0.45);
+}
+
+.logo h1 {
+    font-size: 21px;
+    letter-spacing: 1px;
+}
+
+.logo p {
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* ============ 表单 ============ */
+.field {
+    margin-bottom: 18px;
+}
+
+.field label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.field input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.07);
+    color: var(--text);
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.field input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.25);
+}
+
+.field-row {
+    display: flex;
+    gap: 8px;
+}
+
+.field-row input {
+    flex: 1;
+}
+
+.hint {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+/* ============ 按钮 ============ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+    white-space: nowrap;
+}
+
+.btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 8px 20px rgba(124, 92, 255, 0.35);
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 26px rgba(124, 92, 255, 0.45);
+}
+
+.btn-block {
+    width: 100%;
+    margin-top: 8px;
+}
+
+.btn-ghost {
+    background: rgba(255, 255, 255, 0.10);
+    color: var(--text);
+    border: 1px solid var(--card-border);
+    font-size: 13px;
+}
+
+.btn-ghost:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.btn-sm {
+    padding: 7px 14px;
+    font-size: 13px;
+}
+
+.switch {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--muted);
+}
+
+/* ============ 主页 ============ */
+.topbar {
+    background: rgba(10, 8, 24, 0.55);
+    border-bottom: 1px solid var(--card-border);
+    backdrop-filter: blur(6px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.topbar-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.brand {
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.profile-wrap {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 36px 20px 60px;
+}
+
+.profile-head {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 28px;
+}
+
+.avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+    box-shadow: 0 8px 24px rgba(124, 92, 255, 0.4);
+}
+
+.profile-head h1 {
+    font-size: 24px;
+}
+
+.profile-head .sub {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* ============ 数据卡片 ============ */
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.stat-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 24px 18px;
+    text-align: center;
+    transition: transform 0.15s, border-color 0.15s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(124, 92, 255, 0.5);
+}
+
+.stat-card.highlight {
+    border-color: rgba(124, 92, 255, 0.65);
+    background: linear-gradient(180deg, rgba(124, 92, 255, 0.16), rgba(124, 92, 255, 0.04));
+}
+
+.stat-label {
+    font-size: 13px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+}
+
+.stat-value {
+    margin: 12px 0 10px;
+    font-size: 34px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    word-break: break-all;
+}
+
+.stat-value.ptt {
+    color: var(--accent-2);
+    font-size: 44px;
+}
+
+.stat-value.code {
+    letter-spacing: 4px;
+}
+
+.stat-note {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.copy-btn {
+    background: none;
+    border: 1px solid var(--card-border);
+    color: var(--accent-2);
+    border-radius: 8px;
+    padding: 4px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.copy-btn:hover {
+    background: rgba(124, 92, 255, 0.2);
+}
+
+/* ============ 响应式 ============ */
+@media (max-width: 640px) {
+    .stat-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-value {
+        font-size: 28px;
+    }
+
+    .stat-value.ptt {
+        font-size: 36px;
+    }
+
+    .auth-card {
+        padding: 28px 20px 22px;
+    }
+}

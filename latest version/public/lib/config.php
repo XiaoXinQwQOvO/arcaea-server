@@ -20,24 +20,22 @@ return [
     'db_path' => __DIR__ . '/../../database/arcaea_database.db',
 
     /*
-     * SendCloud 配置（https://www.sendcloud.net）
-     * 注册页面的邮箱验证码通过 SendCloud 发送。
-     * 在 SendCloud 后台创建发信域名并完成验证后，把发件地址填入 from。
+     * Resend.com 配置（https://resend.com）
+     * 注册页面的邮箱验证码通过 Resend 发送。
+     * 在 Resend 后台添加发件域名并完成验证后，把发件地址填入 from。
      */
-    'sendcloud' => [
-        'enabled'   => false,                  // 配置完成后改为 true
-        'api_user'  => '',                     // API_USER（SendCloud 登录账号）
-        'api_key'   => '',                     // API_KEY
-        'from'      => 'noreply@example.com',  // 发件邮箱（需在 SendCloud 后台验证）
-        'from_name' => 'Arcaea 服务器',         // 发件人名称
-        'api_url'   => 'https://api.sendcloud.net/apiv2/mail/send',
+    'resend' => [
+        'enabled'   => false,                   // 配置完成后改为 true
+        'api_key'   => '',                      // Resend API Key（re_ 开头）
+        'from'      => 'Arcaxa', // 发件地址（需在 Resend 后台验证）
+        'api_url'   => 'https://api.resend.com/emails',
     ],
 
     /*
      * 注册时初始的 Memories（记忆源点）。
      * 请与 Python 服务器 config.py 中的 DEFAULT_MEMORIES 保持一致。
      */
-    'default_memories' => 0,
+    'default_memories' => 10000,
 
     /* 邮箱验证码有效期（秒） */
     'code_ttl' => 600,

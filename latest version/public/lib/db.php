@@ -10,8 +10,6 @@ declare(strict_types=1);
  * - busy_timeout，避免并发写锁冲突
  */
 
-require_once __DIR__ . '/config.php';
-
 function app_db(): PDO
 {
     static $pdo = null;

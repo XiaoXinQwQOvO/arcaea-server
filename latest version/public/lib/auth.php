@@ -153,12 +153,16 @@ function format_duration(int $seconds): string
  */
 function user_login(string $name, string $password): array
 {
-    $stmt = app_db()->prepare(
-        'SELECT user_id, name, password, ban_flag, user_code, rating_ptt, email
-         FROM user WHERE name = :name'
-    );
-    $stmt->execute([':name' => $name]);
-    $user = $stmt->fetch();
+    try {
+        $stmt = app_db()->prepare(
+            'SELECT user_id, name, password, ban_flag, user_code, rating_ptt, email
+             FROM user WHERE name = :name'
+        );
+        $stmt->execute([':name' => $name]);
+        $user = $stmt->fetch();
+    } catch (Throwable $e) {
+        return [false, '数据库不可用，请确认 Python 服务器已完成数据库初始化'];
+    }
 
     if ($user === false) {
         return [false, '用户名不存在'];
@@ -233,7 +237,7 @@ function user_register(string $name, string $password, string $email): array
         return [false, $invalid];
     }
 
-    $config = require_once_or_config();
+    $config = app_config();
     $defaultMemories = (int)($config['default_memories'] ?? 0);
 
     $db = app_db();
@@ -346,12 +350,27 @@ function user_register(string $name, string $password, string $email): array
     }
 }
 
-/** 读取配置（return-array 的 config.php 无法被 require_once 连续获取，使用开关闭包缓存） */
-function require_once_or_config(): array
+/** 读取配置（return-array 的 config.php，带静态缓存） */
+function app_config(): array
 {
     static $config = null;
     if ($config === null) {
         $config = require __DIR__ . '/config.php';
     }
     return $config;
+}
+
+/** 取字符串第一个字符（UTF-8 安全，不依赖 mbstring） */
+function first_char(string $s): string
+{
+    if ($s === '') {
+        return '?';
+    }
+    if (function_exists('mb_substr')) {
+        return mb_substr($s, 0, 1, 'UTF-8');
+    }
+    if (preg_match('/./us', $s, $m)) {
+        return $m[0];
+    }
+    return $s[0];
 }

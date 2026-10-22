@@ -1,0 +1,3 @@
+# 使用 Apache 部署时，禁止直接通过 HTTP 访问 lib / api 内部文件。
+# PHP 内置服务器（php -S）会忽略此文件，但由于内部文件不会输出任何内容，也无安全影响。
+Require all denied
