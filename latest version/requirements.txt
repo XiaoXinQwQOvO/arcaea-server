@@ -1,3 +1,5 @@
 flask>=2.0.2
 cryptography>=35.0.0
 limits>=2.7.0
+werkzeug==2.3.8
+setuptools==81.0.0
