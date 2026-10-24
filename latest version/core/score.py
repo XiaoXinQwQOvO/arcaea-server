@@ -93,21 +93,32 @@ class Score:
     @property
     def is_valid(self) -> bool:
         '''分数有效性检查'''
+        return self.get_invalid_reason() is None
+
+    def get_invalid_reason(self, force: bool = False) -> 'str | None':
+        '''分数有效性检查，有效时返回 None，无效时返回原因
+        `force` 为 True 时，即使关闭了成绩校验也照常检查'''
+        if Config.ALLOW_ALL_SCORE and not force:
+            return None
+        if self.shiny_perfect_count is None or self.perfect_count is None or self.near_count is None or self.miss_count is None or self.score is None or self.time_played is None:
+            return 'score data is incomplete'
         if self.shiny_perfect_count < 0 or self.perfect_count < 0 or self.near_count < 0 or self.miss_count < 0 or self.score < 0 or self.time_played <= 0:
-            return False
+            return 'count, score or time played is negative'
         if self.shiny_perfect_count > self.perfect_count:
-            return False
+            return f'shiny perfect count `{self.shiny_perfect_count}` is larger than perfect count `{self.perfect_count}`'
         if self.song.difficulty not in (0, 1, 2, 3, 4):
-            return False
+            return f'difficulty `{self.song.difficulty}` is invalid'
 
         all_note = self.all_note_count
         if all_note == 0:
-            return False
+            return 'note count is zero'
 
         calc_score = 10000000 / all_note * \
             (self.perfect_count + self.near_count/2) + self.shiny_perfect_count
+        if abs(calc_score - self.score) >= 5:
+            return f'score `{self.score}` does not match note counts, expected `{calc_score:.2f}`'
 
-        return abs(calc_score - self.score) < 5
+        return None
 
     @staticmethod
     def calculate_rating(defnum: float, score: int, clear_type: int) -> float:
@@ -289,37 +300,48 @@ class UserPlay(UserScore):
     @property
     def is_valid(self) -> bool:
         '''分数有效性检查，带hash校验'''
-        if not super().is_valid:
-            return False
+        return self.get_invalid_reason() is None
+
+    def get_invalid_reason(self, force: bool = False) -> 'str | None':
+        '''分数有效性检查，有效时返回 None，无效时返回原因
+        `force` 为 True 时，即使关闭了成绩校验也照常检查'''
+        if Config.ALLOW_ALL_SCORE and not force:
+            return None
+        reason = super().get_invalid_reason(force)
+        if reason is not None:
+            return reason
 
         # 歌曲谱面MD5检查，服务器没有谱面就不管了
         from .download import get_song_file_md5
         songfile_hash = get_song_file_md5(
             self.song.song_id, str(self.song.difficulty) + '.aff')
         if songfile_hash and songfile_hash != self.song_hash:
-            return False
+            return f'chart hash mismatch, client `{self.song_hash}`, server `{songfile_hash}`'
 
         x = f'''{self.song_token}{self.song_hash}{self.song.song_id}{self.song.difficulty}{self.score}{self.shiny_perfect_count}{
             self.perfect_count}{self.near_count}{self.miss_count}{self.health}{self.modifier}{self.clear_type}'''
         if self.combo_interval_bonus is not None:
             if self.combo_interval_bonus < 0 or self.combo_interval_bonus > self.all_note_count / 150:
-                return False
+                return f'combo interval bonus `{self.combo_interval_bonus}` is out of range'
             x = x + str(self.combo_interval_bonus)
 
         if self.hp_interval_bonus is not None and self.hp_interval_bonus < 0:
-            return False
+            return f'hp interval bonus `{self.hp_interval_bonus}` is negative'
 
         if self.fever_bonus is not None and (self.fever_bonus < 0 or self.fever_bonus > self.perfect_count * 5):
             # fever 等级最高为 5
-            return False
+            return f'fever bonus `{self.fever_bonus}` is out of range'
 
         if self.rank_bonus is not None and (self.rank_bonus < 0 or self.rank_bonus > 4):
-            return False
+            return f'rank bonus `{self.rank_bonus}` is out of range'
 
         y = f'{self.user.user_id}{self.song_hash}'
         checksum = md5(x+md5(y))
 
-        return checksum == self.submission_hash
+        if checksum != self.submission_hash:
+            return f'submission hash mismatch, server `{checksum}`, client `{self.submission_hash}`'
+
+        return None
 
     def get_play_state(self) -> None:
         '''检查token，当然这里不管有没有，是用来判断世界模式和课题模式的'''

@@ -163,6 +163,22 @@ class Config():
 
     '''
     --------------------
+    是否把所有歌曲都当作需要从服务器下载的远端歌曲
+    官方客户端自带歌曲文件，因此 songlist 中没标 remote_dl 的歌曲默认只下发 BYD 谱面；
+    私有服务器分发的客户端一般不带歌曲文件，需要置为 True，才会下发全部谱面与音频，
+    否则客户端下载歌曲时会报「下载歌曲时发生问题。请重试一次」
+    If all songs should be treated as remote download songs
+    The official client bundles song files, so only BYD charts are served for songs without `remote_dl` in songlist by default.
+    Clients distributed by private servers usually have no bundled songs, set this to `True` to serve all charts and audios,
+    otherwise the client will report a song download error.
+    '''
+    DOWNLOAD_FORCE_REMOTE = False
+    '''
+    --------------------
+    '''
+
+    '''
+    --------------------
     Arcaea登录的最大允许设备数量，最小值为1
     The maximum number of devices allowed to log in Arcaea, minimum: 1
     '''
@@ -190,6 +206,18 @@ class Config():
     '''
     ALLOW_INFO_LOG = False
     ALLOW_WARNING_LOG = False
+    '''
+    --------------------
+    '''
+
+    '''
+    --------------------
+    是否关闭成绩有效性校验
+    为 True 时不校验分数、谱面 hash 和提交 hash，允许所有成绩上传
+    If score validation is disabled
+    If `True`, score, chart hash and submission hash will not be verified, all scores are allowed to be uploaded.
+    '''
+    ALLOW_ALL_SCORE = False
     '''
     --------------------
     '''

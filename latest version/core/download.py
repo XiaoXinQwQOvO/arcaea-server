@@ -79,7 +79,8 @@ class SonglistParser:
         if 'id' not in song:
             return {}
         r = 0
-        if 'remote_dl' in song and song['remote_dl']:
+        if Config.DOWNLOAD_FORCE_REMOTE or ('remote_dl' in song and song['remote_dl']):
+            # 远端歌曲（或强制全部当作远端歌曲），下发全部谱面与音频
             r |= 32
             for i in song.get('difficulties', []):
                 if i['ratingClass'] == 3 and i.get('audioOverride', False):

@@ -1,9 +1,10 @@
 from random import randint
 from time import time
 
-from flask import Blueprint, request
+from flask import Blueprint, current_app, request
 
 from core.constant import Constant
+from core.config_manager import Config
 from core.course import CoursePlay
 from core.error import InputError
 from core.rank import RankList
@@ -143,7 +144,15 @@ def song_score_post(user_id):
         x.room_total_players = f.get('room_total_players', type=int)
 
         if not x.is_valid:
+            current_app.logger.warning(
+                f'Invalid score for user `{user_id}`: {x.get_invalid_reason()} | form: {f.to_dict()}')
             raise InputError('Invalid score.', 107)
+        if Config.ALLOW_ALL_SCORE:
+            # 成绩校验已关闭，但记录本应失败的原因，便于排查客户端与服务器不一致的问题
+            r = x.get_invalid_reason(force=True)
+            if r is not None:
+                current_app.logger.info(
+                    f'Score check bypassed for user `{user_id}`: {r} | form: {f.to_dict()}')
         x.upload_score()
         return success_return(x.to_dict())
 

@@ -84,6 +84,14 @@ class Config:
 
     DOWNLOAD_FORBID_WHEN_NO_ITEM = False
 
+    # 是否把所有歌曲都当作需要从服务器下载的远端歌曲
+    # 官方客户端自带歌曲文件，所以 songlist 里没标 remote_dl 的歌曲只下发 BYD 谱面；
+    # 私有服务器分发的客户端通常不带歌曲文件，此时需要下发全部谱面与音频，否则客户端会报「下载歌曲时发生问题」
+    # If all songs should be treated as remote download songs
+    # The official client bundles song files, so only the BYD chart is served for songs without `remote_dl` in songlist.
+    # Clients distributed by private servers usually have no bundled songs, so all charts and audios should be served.
+    DOWNLOAD_FORCE_REMOTE = False
+
     BUNDLE_DOWNLOAD_TIMES_LIMIT = '1000/60 minutes'
     BUNDLE_DOWNLOAD_TIME_GAP_LIMIT = 3000
 
@@ -92,6 +100,12 @@ class Config:
     ALLOW_BAN_MULTIDEVICE_USER_AUTO = True
 
     ALLOW_SCORE_WITH_NO_SONG = True
+
+    # 是否关闭成绩有效性校验
+    # 为 True 时不校验分数、谱面 hash 和提交 hash，允许所有成绩上传
+    # If score validation is disabled
+    # If `True`, score, chart hash and submission hash will not be verified, all scores are allowed to be uploaded.
+    ALLOW_ALL_SCORE = False
 
     ALLOW_INFO_LOG = False
     ALLOW_WARNING_LOG = False
